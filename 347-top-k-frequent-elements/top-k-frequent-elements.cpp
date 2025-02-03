@@ -1,22 +1,25 @@
 class Solution {
-    static bool comp(const pair<int, int>& a, const pair<int, int>& b) {
-        return a.second > b.second;
-    }
 
 public:
     vector<int> topKFrequent(vector<int>& nums, int k) {
         map<int, int> freq;
         int n = nums.size();
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             freq[nums[i]]++;
-        vector<pair<int, int>> vec(freq.begin(), freq.end());
-        sort(vec.begin(), vec.end(), comp);
+        }
+
+        priority_queue<pair<int, int>, vector<pair<int, int>>,
+                       greater<pair<int, int>>>
+            pq;
+        for (auto it : freq) {
+            pq.push({it.second, it.first});
+            if (pq.size() > k)
+                pq.pop();
+        }
         vector<int> ans;
-        for (auto it : vec) {
-            ans.push_back(it.first);
-            k--;
-            if (k == 0)
-                break;
+        while (!pq.empty()) {
+            ans.push_back(pq.top().second);
+            pq.pop();
         }
         return ans;
     }
